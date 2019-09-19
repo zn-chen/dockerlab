@@ -14,22 +14,6 @@
 >
 > * level = debug
 >   >日志等级
-> * to_stderr = True
->   >是否输出到标准错误输出(tornado的log默认输出到错误输出,懒得改)
-> * to_file = true
->   >是否输出到日志文件
-> * rotate_mode = time
->   >日志分割模式(time:按时间分割/size:按记录条数分割)
-> * rotate_when = D
->   >按时间分割的单位('S', 'M', 'H', 'D')->(秒, 分钟, 小时, 天),
-> * rotate_interval = 1
->   >按时间分割的周期(分割时间的周期为rotate_when*rotate_interval)
-> * file_max_size = 100000
->   > 每个日志文件的最大条数
-> * file_path = runtimes
->   >日志存放的目录,可以是相对路径也可以是绝对路径
-> * file_num_backups = 50
->   > 日志的滚动保留的最大个数
 
 ##### [MongoDB]
 >
