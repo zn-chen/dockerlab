@@ -1,0 +1,16 @@
+[Base]
+port = 8889
+
+[Log]
+level = debug
+
+[MongoDB]
+IP = 127.0.0.1
+port = 27017
+
+[DockerRemote]
+ip = 192.168.146.133
+port = 2375
+
+[DockerSettings]
+default_life = 3600
