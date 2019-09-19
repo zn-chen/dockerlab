@@ -21,15 +21,6 @@ class _Config(object):
         # Logger
         log = config["Log"]
         self.log_level = log.get("level")
-        self.log_to_stderr = log.getboolean("to_stderr")
-        self.log_to_file = log.getboolean("to_file")
-
-        self.log_rotate_mode = log.get("rotate_mode")
-        self.log_rotate_when = log.get("rotate_when")
-        self.log_rotate_interval = log.getint("rotate_interval")
-        self.log_file_max_size = log.getint("file_max_size")
-        self.log_file_path = log.get("file_path")
-        self.log_file_num_backups = log.getint("file_num_backups")
 
         # MongoDB
         mongdb = config["MongoDB"]
