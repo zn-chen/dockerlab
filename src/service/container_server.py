@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-from tornado.log import gen_log
+from logging import getLogger
 from aiodocker import Docker
 
 from service.base import *
@@ -21,6 +21,7 @@ class ContainerServer(ServerBase):
         query:      查询容器详细信息
         delay:      设置容器销毁时间
     """
+    _log = getLogger()
 
     def __init__(self, request: RequestHandler, docker_client: Docker, container_id):
 
@@ -55,7 +56,7 @@ class ContainerServer(ServerBase):
             return True
         except Exception as e:
             # 如果提供的id无法查询到容器则直接拒绝访问
-            gen_log.debug("The container could not be found")
+            self._log.debug("The container could not be found")
             await self.send_message(code="400")
             return False
 
@@ -66,7 +67,7 @@ class ContainerServer(ServerBase):
         # 获得操作对应的的_handler
         _handler = self._handlers.get(option)
         if _handler is None:
-            gen_log.error("Can't find options {}".format(option))
+            self._log.error("Can't find options {}".format(option))
             await self.on_err(code="300")
             return
 
@@ -74,7 +75,7 @@ class ContainerServer(ServerBase):
         try:
             params = json.loads(params)
         except Exception as e:
-            gen_log.error(e)
+            self._log.error(e)
             await self.on_err(code="400")
             return
 
@@ -82,7 +83,7 @@ class ContainerServer(ServerBase):
         try:
             await _handler(params)
         except Exception as e:
-            gen_log.error(e)
+            self._log.error(e)
             await self.on_err(code=e.__str__())
 
     @staticmethod
@@ -163,7 +164,7 @@ class ContainerServer(ServerBase):
             data=container_infos,
         )
 
-        gen_log.info("Containers be create {0} {1}".format(container_ids, self.request.request.remote_ip))
+        self._log.info("Containers be create {0} {1}".format(container_ids, self.request.request.remote_ip))
 
     async def on_start(self) -> None:
         """
@@ -172,7 +173,7 @@ class ContainerServer(ServerBase):
         await self.container_client.start()
         await self._on_query(params=dict())
 
-        gen_log.info("Start container {0} ({1})".format(self.container_id, self.request.request.remote_ip))
+        self._log.info("Start container {0} ({1})".format(self.container_id, self.request.request.remote_ip))
 
     async def on_stop(self) -> None:
         """
@@ -181,7 +182,7 @@ class ContainerServer(ServerBase):
         await self.container_client.stop()
         await self._on_query(dict())
 
-        gen_log.info("Stop container {0} ({1})".format(self.container_id, self.request.request.remote_ip))
+        self._log.info("Stop container {0} ({1})".format(self.container_id, self.request.request.remote_ip))
 
     async def on_delete(self) -> None:
         """
@@ -194,7 +195,7 @@ class ContainerServer(ServerBase):
                 code=601,
                 message="You cannot delete a running container",
             )
-            gen_log.info("Can not delete container {0} , not stop container ({1})".format(
+            self._log.info("Can not delete container {0} , not stop container ({1})".format(
                 self.container_id, self.request.request.remote_ip))
             return
 
@@ -207,7 +208,7 @@ class ContainerServer(ServerBase):
         container_db = await get_container(_id=self.container_id)
         await container_db.remove()
 
-        gen_log.info("Delete container {0} ({1})".format(self.container_id, self.request.request.remote_ip))
+        self._log.info("Delete container {0} ({1})".format(self.container_id, self.request.request.remote_ip))
 
     async def on_query(self) -> None:
         """
@@ -223,7 +224,7 @@ class ContainerServer(ServerBase):
             pass
 
         await self.send_message(data=data)
-        gen_log.info("Query container {0} ({1})".format(self.container_id, self.request.request.remote_ip))
+        self._log.info("Query container {0} ({1})".format(self.container_id, self.request.request.remote_ip))
 
     async def on_delay(self, destroy_time) -> None:
         """
@@ -233,7 +234,7 @@ class ContainerServer(ServerBase):
         await container_db.set_destroy_time(destroy_time=destroy_time)
 
         await self._on_query(dict())
-        gen_log.info("Delay container {0} {1} ({2})".format(self.container_id, destroy_time,
+        self._log.info("Delay container {0} {1} ({2})".format(self.container_id, destroy_time,
                                                             self.request.request.remote_ip))
 
 

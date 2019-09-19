@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 from tornado.ioloop import PeriodicCallback
-from tornado.log import gen_log
+from logging import getLogger
 
 from model.container import get_containers_info, get_container
 from model import DockerClient
@@ -14,19 +14,19 @@ async def del_containers(container_id: str) -> None:
         await container_remote.delete()
     except Exception as e:
         # TODO:此处无法找到容器的处理有待商榷
-        gen_log.error(e)
+        getLogger().error(e)
 
     container_db = await get_container(_id=container_id)
     await container_db.remove()
 
-    gen_log.info("Delete the expired container {}".format(container_id))
+    getLogger().info("Delete the expired container {}".format(container_id))
 
 
 async def containers_clear():
     """
     清理过期容器
     """
-    # gen_log.debug("Execute the scheduled task containers_clear")
+    # getLogger().debug("Execute the scheduled task containers_clear")
 
     judge = lambda destroy_time: True if destroy_time <= int(time.time()) else False
     async for i in get_containers_info():

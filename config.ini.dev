@@ -1,0 +1,24 @@
+[Base]
+port = 8087
+
+[Log]
+level = debug
+to_stderr = False
+to_file = true
+rotate_mode = time
+rotate_when = D
+rotate_interval = 1
+file_max_size = 100000
+file_path = /home/dockerlab/runtimes
+file_num_backups = 50
+
+[MongoDB]
+IP = 111.231.138.158
+port = 27017
+
+[DockerRemote]
+ip = 111.231.138.158
+port = 23756
+
+[DockerSettings]
+default_life = 3600
